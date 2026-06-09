@@ -1,0 +1,94 @@
+"""Servico de pedidos.
+
+Responsabilidades:
+  * montar AUTOMATICAMENTE a cadeia de Decorators que calcula o preco final
+    do pedido (desconto progressivo -> cupom -> imposto -> frete);
+  * baixar estoque, persistir pedido e itens (relacionamento 1:n);
+  * limpar o carrinho.
+
+A montagem da cadeia de decorators e justamente o "processo de negocio
+automatizado" exigido pelo enunciado.
+"""
+from datetime import datetime
+
+from alexandria.domain.entities.pedido import ItemPedido, Pedido
+from alexandria.domain.pricing.calculo_preco import (
+    CupomDesconto,
+    DescontoProgressivo,
+    Frete,
+    Imposto,
+    PrecoBaseCarrinho,
+)
+from alexandria.domain.pricing.cupons import percentual_do_cupom
+from alexandria.infra.repositories.livro_repository import LivroRepository
+from alexandria.infra.repositories.pedido_repository import PedidoRepository
+
+
+class CarrinhoVazio(Exception):
+    pass
+
+
+class CupomInvalido(Exception):
+    pass
+
+
+class PedidoService:
+    def __init__(self, pedido_repo=None, livro_repo=None):
+        self._pedido_repo = pedido_repo or PedidoRepository()
+        self._livro_repo = livro_repo or LivroRepository()
+
+    def montar_calculo(self, carrinho, codigo_cupom=None):
+        """Compoe a cadeia de Decorators sobre o subtotal do carrinho.
+
+        Ordem: base -> desconto progressivo -> cupom -> imposto -> frete.
+        Retorna o objeto CalculoPreco pronto para `.calcular()` e `.descricao()`.
+        """
+        calculo = PrecoBaseCarrinho(carrinho)
+        calculo = DescontoProgressivo(calculo, carrinho.quantidade_total())
+
+        if codigo_cupom:
+            percentual = percentual_do_cupom(codigo_cupom)
+            if percentual is None:
+                raise CupomInvalido(f"Cupom '{codigo_cupom}' invalido.")
+            calculo = CupomDesconto(calculo, codigo_cupom.strip().upper(), percentual)
+
+        calculo = Imposto(calculo)
+        calculo = Frete(calculo)
+        return calculo
+
+    def finalizar_pedido(self, usuario_id, carrinho, codigo_cupom=None):
+        if carrinho.esta_vazio():
+            raise CarrinhoVazio("Carrinho vazio.")
+
+        calculo = self.montar_calculo(carrinho, codigo_cupom)
+        total = round(calculo.calcular(), 2)
+
+        pedido = Pedido(
+            usuario_id=usuario_id,
+            total=total,
+            data=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        )
+        pedido_id = self._pedido_repo.inserir(pedido)
+
+        for item in carrinho.itens:
+            livro = self._livro_repo.buscar_por_id(item.livro.id)
+            if livro is None:
+                raise ValueError("Livro nao encontrado.")
+            livro.baixar_estoque(item.quantidade)
+            self._livro_repo.atualizar(livro)
+
+            self._pedido_repo.inserir_item(ItemPedido(
+                livro_id=livro.id,
+                quantidade=item.quantidade,
+                preco_unitario=livro.preco,
+                pedido_id=pedido_id,
+            ))
+
+        carrinho.limpar()
+        return pedido_id
+
+    def listar_pedidos_do_usuario(self, usuario_id):
+        return self._pedido_repo.listar_por_usuario(usuario_id)
+
+    def itens_do_pedido(self, pedido_id):
+        return self._pedido_repo.listar_itens_detalhado(pedido_id)
