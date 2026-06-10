@@ -10,7 +10,7 @@ TAMANHO_CPF = 11
 TAMANHO_TELEFONE = 11
 TAMANHO_CEP = 8
 
-# Regras de precificacao do pedido:SS
+# Regras de precificacao do pedido:
 ALIQUOTA_IMPOSTO = 0.05            # 5% de imposto sobre o subtotal
 VALOR_FRETE_PADRAO = 15.00         # frete fixo
 VALOR_FRETE_GRATIS_ACIMA_DE = 200.00   # frete gratis a partir deste total

@@ -46,7 +46,7 @@ class AuthService:
             telefone=Telefone(dados["telefone"]).valor,
             cpf=Cpf(dados["cpf"]).valor,
         )
-        # inserir() preenche usuario.id in-place (convencao dos repositorios).
+        
         self._usuario_repo.inserir(usuario)
 
         endereco = Endereco(

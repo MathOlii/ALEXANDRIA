@@ -1,7 +1,4 @@
-"""Repositorio de Endereco.
 
-Lado "1" do relacionamento 1:1 com Usuario (usuario_id e UNIQUE).
-"""
 from typing import List, Optional
 
 from alexandria.domain.entities.endereco import Endereco
@@ -30,7 +27,6 @@ class EnderecoRepository(BaseRepository):
         ))
         self._db.commit()
         entidade.id = self._cursor.lastrowid
-        # Conform to BaseRepository.inserir signature: do not return value
         return None
 
     def atualizar(self, entidade):
