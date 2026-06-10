@@ -1,14 +1,4 @@
-"""Servico de pedidos.
 
-Responsabilidades:
-  * montar AUTOMATICAMENTE a cadeia de Decorators que calcula o preco final
-    do pedido (desconto progressivo -> cupom -> imposto -> frete);
-  * baixar estoque, persistir pedido e itens (relacionamento 1:n);
-  * limpar o carrinho.
-
-A montagem da cadeia de decorators e justamente o "processo de negocio
-automatizado" exigido pelo enunciado.
-"""
 from datetime import datetime
 
 from alexandria.domain.entities.pedido import ItemPedido, Pedido
@@ -38,11 +28,7 @@ class PedidoService:
         self._livro_repo = livro_repo or LivroRepository()
 
     def montar_calculo(self, carrinho, codigo_cupom=None):
-        """Compoe a cadeia de Decorators sobre o subtotal do carrinho.
-
-        Ordem: base -> desconto progressivo -> cupom -> imposto -> frete.
-        Retorna o objeto CalculoPreco pronto para `.calcular()` e `.descricao()`.
-        """
+    
         calculo = PrecoBaseCarrinho(carrinho)
         calculo = DescontoProgressivo(calculo, carrinho.quantidade_total())
 

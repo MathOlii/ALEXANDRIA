@@ -1,10 +1,3 @@
-"""Padrao BUILDER para a entidade Livro.
-
-A construcao de um Livro envolve varios campos, alguns com validacao
-(preco > 0, estoque >= 0, ano plausivel). O Builder isola essa montagem
-passo a passo e garante que so produzimos objetos validos, mantendo a
-entidade Livro simples.
-"""
 from alexandria.domain.entities.livro import Livro
 
 _ANO_MINIMO = -3000

@@ -1,11 +1,3 @@
-"""Carrinho de compras.
-
-Calistenia de Objetos: o Carrinho e uma "colecao de primeira classe" -
-encapsula a lista de itens e expoe operacoes de negocio em vez de deixar
-a lista crua exposta.
-"""
-
-
 class ItemCarrinho:
     def __init__(self, livro, quantidade=1):
         self.livro = livro

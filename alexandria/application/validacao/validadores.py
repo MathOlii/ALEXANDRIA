@@ -1,16 +1,9 @@
-"""Validacao de dados de cadastro (padrao Strategy + Composite leve).
 
-Cada regra e uma estrategia que sabe validar um campo e devolver uma mensagem
-de erro. O ValidadorCadastro agrega varias estrategias e roda todas,
-acumulando erros. Adicionar uma nova regra nao altera as existentes (OCP).
-
-As proprias regras se apoiam nos Value Objects do dominio, que ja sabem o
-que e um valor valido (DRY) - aqui apenas traduzimos para mensagens amigaveis.
-"""
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from alexandria.config import TAMANHO_MINIMO_SENHA
-from alexandria.domain.value_objects import (
+from alexandria.domain.valor_obj import (
     Cep,
     Cpf,
     Email,
@@ -22,12 +15,12 @@ from alexandria.domain.value_objects import (
 
 class RegraValidacao(ABC):
     @abstractmethod
-    def validar(self, dados):
-        """Retorna mensagem de erro (str) ou None se valido."""
+    def validar(self, dados) -> Optional[str]:
+        raise NotImplementedError()
 
 
 class _RegraValueObject(RegraValidacao):
-    """Regra generica baseada em um Value Object que valida no construtor."""
+    
 
     def __init__(self, campo, tipo, mensagem):
         self._campo = campo
@@ -62,7 +55,7 @@ class RegraObrigatorio(RegraValidacao):
 
 
 class ValidadorCadastro:
-    """Agrega as regras de validacao do cadastro de usuario."""
+    
 
     def __init__(self):
         self._regras = [
@@ -76,7 +69,7 @@ class ValidadorCadastro:
         ]
 
     def validar(self, dados):
-        """Retorna lista de mensagens de erro (vazia se tudo valido)."""
+        
         erros = []
         for regra in self._regras:
             erro = regra.validar(dados)

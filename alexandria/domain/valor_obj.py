@@ -1,11 +1,4 @@
-"""Objetos de Valor (Value Objects).
 
-Calistenia de Objetos: "encapsule todos os tipos primitivos".
-Em vez de carregar email/cpf/telefone como strings cruas espalhadas pelo
-sistema, criamos pequenos tipos imutaveis que se auto-validam ao nascer.
-Se um objeto existe, ele e valido. Isso concentra a regra de formato em um
-unico lugar (SRP) e impede estados invalidos.
-"""
 import re
 
 from alexandria.config import (
@@ -17,7 +10,7 @@ from alexandria.config import (
 
 
 class ValorInvalido(ValueError):
-    """Erro de dominio levantado quando um value object recebe valor invalido."""
+    pass
 
 
 def _somente_digitos(texto):

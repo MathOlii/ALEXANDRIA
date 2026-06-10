@@ -1,10 +1,3 @@
-"""Entidades de usuario.
-
-Usuario e a classe base; Cliente e Administrador sao especializacoes
-(heranca / LSP). O tipo de acesso e definido pela propria subclasse, evitando
-que o codigo cliente precise passar a "string magica" do tipo.
-"""
-
 TIPO_CLIENTE = "cliente"
 TIPO_ADMIN = "admin"
 

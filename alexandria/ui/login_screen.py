@@ -1,4 +1,4 @@
-"""Tela de login."""
+
 import tkinter as tk
 
 from alexandria.application.services.auth_service import (

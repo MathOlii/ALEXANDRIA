@@ -27,26 +27,25 @@ class UsuarioRepository(BaseRepository):
             id=row[0],
         )
 
-    def inserir(self, usuario):
+    def inserir(self, entidade):
         self._cursor.execute("""
             INSERT INTO usuario (nome, email, senha, telefone, cpf, tipo_acesso)
             VALUES (?, ?, ?, ?, ?, ?)
         """, (
-            usuario.nome, usuario.email, usuario.senha,
-            usuario.telefone, usuario.cpf, usuario.tipo_acesso,
+            entidade.nome, entidade.email, entidade.senha,
+            entidade.telefone, entidade.cpf, entidade.tipo_acesso,
         ))
         self._db.commit()
-        usuario.id = self._cursor.lastrowid
-        return usuario.id
+        entidade.id = self._cursor.lastrowid
 
-    def atualizar(self, usuario):
+    def atualizar(self, entidade):
         self._cursor.execute("""
             UPDATE usuario SET
                 nome = ?, email = ?, senha = ?, telefone = ?, cpf = ?, tipo_acesso = ?
             WHERE id = ?
         """, (
-            usuario.nome, usuario.email, usuario.senha,
-            usuario.telefone, usuario.cpf, usuario.tipo_acesso, usuario.id,
+            entidade.nome, entidade.email, entidade.senha,
+            entidade.telefone, entidade.cpf, entidade.tipo_acesso, entidade.id,
         ))
         self._db.commit()
 
@@ -64,6 +63,6 @@ class UsuarioRepository(BaseRepository):
         row = self._cursor.fetchone()
         return self._para_entidade(row) if row else None
 
-    def listar_todos(self):
+    def listar_todos(self):  # type: ignore[override]
         self._cursor.execute("SELECT * FROM usuario ORDER BY nome")
         return [self._para_entidade(row) for row in self._cursor.fetchall()]

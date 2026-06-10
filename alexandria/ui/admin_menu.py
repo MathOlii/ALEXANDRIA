@@ -1,9 +1,4 @@
-"""Menu do administrador: CRUD completo de livros.
 
-As acoes de escrita (inserir, atualizar, deletar) sao executadas via padrao
-Command, atraves de um GerenciadorComandos que permite desfazer a ultima acao.
-A construcao do Livro usa o padrao Builder.
-"""
 import tkinter as tk
 from tkinter import messagebox, ttk
 
@@ -102,6 +97,10 @@ class AdminMenu:
         if livro_id is None:
             return
         livro = self.repo.buscar_por_id(livro_id)
+        if livro is None:
+            messagebox.showerror("Erro", "Livro nao encontrado.")
+            self.listar()
+            return
         valores = {
             "Titulo": livro.titulo, "Autor": livro.autor, "Editora": livro.editora,
             "Genero": livro.genero, "Preco": livro.preco, "Estoque": livro.estoque,

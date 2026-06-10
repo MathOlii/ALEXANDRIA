@@ -1,6 +1,3 @@
-"""Entidades de pedido (lado "1") e item de pedido (lado "n")."""
-
-
 class Pedido:
     def __init__(self, usuario_id, total, data, id=None):
         self.id = id

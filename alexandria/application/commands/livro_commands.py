@@ -1,25 +1,18 @@
-"""Padrao COMMAND para as operacoes de CRUD de livro do administrador.
 
-Cada operacao (inserir, atualizar, deletar) e encapsulada como um objeto
-Comando com `executar()` e `desfazer()`. Um Invoker mantem o historico e
-permite desfazer a ultima acao - util, por exemplo, para reverter uma
-exclusao acidental de livro. Isso desacopla a UI (que so dispara comandos)
-da regra de execucao.
-"""
 from abc import ABC, abstractmethod
 
 
 class Comando(ABC):
     @abstractmethod
-    def executar(self):
+    def executar(self) -> None:
         ...
 
     @abstractmethod
-    def desfazer(self):
+    def desfazer(self) -> None:
         ...
 
     @abstractmethod
-    def descricao(self):
+    def descricao(self) -> str:
         ...
 
 
@@ -77,7 +70,6 @@ class DeletarLivroCommand(Comando):
 
 
 class GerenciadorComandos:
-    """Invoker: executa comandos e guarda historico para desfazer."""
 
     def __init__(self):
         self._historico = []

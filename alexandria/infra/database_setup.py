@@ -1,9 +1,4 @@
-"""Criacao das tabelas do banco em um unico lugar.
 
-No projeto original a criacao de tabelas estava duplicada entre
-``tabelas_livros`` e ``tabelas_pedidos``, e havia a tabela ``usuario_completo``
-que nunca era usada. Aqui tudo fica centralizado e sem duplicacao (DRY).
-"""
 from alexandria.infra.conexao import Conexao
 
 _TABELAS = (

@@ -1,9 +1,4 @@
-"""Padrao FACTORY para criacao de usuarios.
 
-Concentra a decisao de qual subclasse de Usuario instanciar a partir do
-tipo de acesso. O codigo cliente nao precisa conhecer as classes concretas
-nem repetir o "if tipo == admin" em varios lugares (OCP/SRP).
-"""
 from alexandria.domain.entities.usuario import (
     TIPO_ADMIN,
     TIPO_CLIENTE,

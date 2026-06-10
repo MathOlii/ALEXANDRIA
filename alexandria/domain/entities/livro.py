@@ -1,6 +1,3 @@
-"""Entidade Livro."""
-
-
 class Livro:
     def __init__(self, titulo, autor, editora, genero, preco, estoque,
                  ano_publicacao, idioma, id=None):

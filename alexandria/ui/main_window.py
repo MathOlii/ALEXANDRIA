@@ -1,4 +1,4 @@
-"""Janela principal: gerencia a navegacao entre telas (tkinter)."""
+
 import tkinter as tk
 
 from alexandria.domain.entities.carrinho import Carrinho

@@ -1,7 +1,4 @@
-"""Tela de cadastro de usuario + endereco (relacionamento 1:1).
 
-A UI apenas coleta os dados e delega a validacao/persistencia ao AuthService.
-"""
 import tkinter as tk
 
 from alexandria.application.services.auth_service import (

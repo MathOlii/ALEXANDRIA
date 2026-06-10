@@ -2,6 +2,8 @@
 
 Lado "1" do relacionamento 1:1 com Usuario (usuario_id e UNIQUE).
 """
+from typing import List, Optional
+
 from alexandria.domain.entities.endereco import Endereco
 from alexandria.infra.conexao import Conexao
 from alexandria.infra.repositories.base_repository import BaseRepository
@@ -18,26 +20,27 @@ class EnderecoRepository(BaseRepository):
             cidade=row[5], uf=row[6], usuario_id=row[7], id=row[0],
         )
 
-    def inserir(self, endereco):
+    def inserir(self, entidade):
         self._cursor.execute("""
             INSERT INTO endereco (rua, numero, bairro, cep, cidade, uf, usuario_id)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
-            endereco.rua, endereco.numero, endereco.bairro, endereco.cep,
-            endereco.cidade, endereco.uf, endereco.usuario_id,
+            entidade.rua, entidade.numero, entidade.bairro, entidade.cep,
+            entidade.cidade, entidade.uf, entidade.usuario_id,
         ))
         self._db.commit()
-        endereco.id = self._cursor.lastrowid
-        return endereco.id
+        entidade.id = self._cursor.lastrowid
+        # Conform to BaseRepository.inserir signature: do not return value
+        return None
 
-    def atualizar(self, endereco):
+    def atualizar(self, entidade):
         self._cursor.execute("""
             UPDATE endereco SET
                 rua = ?, numero = ?, bairro = ?, cep = ?, cidade = ?, uf = ?
             WHERE id = ?
         """, (
-            endereco.rua, endereco.numero, endereco.bairro, endereco.cep,
-            endereco.cidade, endereco.uf, endereco.id,
+            entidade.rua, entidade.numero, entidade.bairro, entidade.cep,
+            entidade.cidade, entidade.uf, entidade.id,
         ))
         self._db.commit()
 
@@ -45,17 +48,17 @@ class EnderecoRepository(BaseRepository):
         self._cursor.execute("DELETE FROM endereco WHERE id = ?", (id,))
         self._db.commit()
 
-    def buscar_por_id(self, id):
+    def buscar_por_id(self, id):  # type: ignore[override]
         self._cursor.execute("SELECT * FROM endereco WHERE id = ?", (id,))
         row = self._cursor.fetchone()
         return self._para_entidade(row) if row else None
 
-    def buscar_por_usuario(self, usuario_id):
+    def buscar_por_usuario(self, usuario_id) -> Optional[Endereco]:
         self._cursor.execute(
             "SELECT * FROM endereco WHERE usuario_id = ?", (usuario_id,))
         row = self._cursor.fetchone()
         return self._para_entidade(row) if row else None
 
-    def listar_todos(self):
+    def listar_todos(self) -> List[Endereco]:  # type: ignore[override]
         self._cursor.execute("SELECT * FROM endereco")
         return [self._para_entidade(row) for row in self._cursor.fetchall()]

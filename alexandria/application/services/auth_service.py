@@ -1,15 +1,9 @@
-"""Servico de autenticacao e cadastro.
 
-No projeto original o AuthService usava input()/print() diretamente,
-misturando interface com regra de negocio (violacao de SRP). Aqui o servico
-recebe apenas dados e devolve resultados/excecoes; quem coleta os dados e a
-camada de UI. As dependencias (repositorios) sao injetadas (DIP).
-"""
 import hashlib
 
 from alexandria.application.validacao.validadores import ValidadorCadastro
 from alexandria.domain.entities.endereco import Endereco
-from alexandria.domain.value_objects import Cep, Cpf, Email, Telefone, Uf
+from alexandria.domain.valor_obj import Cep, Cpf, Email, Telefone, Uf
 from alexandria.factories.usuario_factory import UsuarioFactory
 from alexandria.infra.repositories.endereco_repository import EnderecoRepository
 from alexandria.infra.repositories.usuario_repository import UsuarioRepository
@@ -36,11 +30,7 @@ class AuthService:
         return hashlib.sha256(senha.encode()).hexdigest()
 
     def cadastrar(self, dados):
-        """Cadastra usuario + endereco (relacionamento 1:1).
-
-        `dados` e um dict com os campos do formulario. Levanta DadosInvalidos
-        se a validacao falhar.
-        """
+       
         erros = self._validador.validar(dados)
         if erros:
             raise DadosInvalidos(erros)
@@ -67,7 +57,6 @@ class AuthService:
         return usuario
 
     def autenticar(self, email, senha):
-        """Retorna o Usuario autenticado ou levanta CredenciaisInvalidas."""
         try:
             email_normalizado = Email(email).valor
         except Exception:

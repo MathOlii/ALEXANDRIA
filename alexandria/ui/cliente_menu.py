@@ -1,8 +1,4 @@
-"""Menu do cliente: catalogo, carrinho, cupom e pedidos.
 
-A tela do carrinho mostra o detalhamento do preco calculado pela cadeia de
-Decorators (subtotal -> descontos -> imposto -> frete).
-"""
 import tkinter as tk
 from tkinter import messagebox, ttk
 

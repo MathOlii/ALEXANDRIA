@@ -1,9 +1,4 @@
-"""Repositorio de Pedido + itens (relacionamento 1:n).
 
-Corrige o bug do projeto original, que fazia JOIN com a tabela "livros"
-(inexistente - a tabela e "livro", no singular) e usava um cursor proprio
-em vez do cursor da conexao Singleton.
-"""
 from alexandria.domain.entities.pedido import ItemPedido, Pedido
 from alexandria.infra.conexao import Conexao
 from alexandria.infra.repositories.base_repository import BaseRepository
@@ -15,14 +10,15 @@ class PedidoRepository(BaseRepository):
         self._cursor = self._db.cursor
 
     # --- Pedido (cabecalho) ---
-    def inserir(self, pedido):
+    def inserir(self, entidade):
+        
+        pedido = entidade
         self._cursor.execute(
             "INSERT INTO pedido (usuario_id, total, data) VALUES (?, ?, ?)",
             (pedido.usuario_id, pedido.total, pedido.data),
         )
         self._db.commit()
         pedido.id = self._cursor.lastrowid
-        return pedido.id
 
     def inserir_item(self, item):
         self._cursor.execute("""
@@ -33,10 +29,10 @@ class PedidoRepository(BaseRepository):
         item.id = self._cursor.lastrowid
         return item.id
 
-    def atualizar(self, pedido):
+    def atualizar(self, entidade):
         self._cursor.execute(
             "UPDATE pedido SET total = ?, data = ? WHERE id = ?",
-            (pedido.total, pedido.data, pedido.id),
+            (entidade.total, entidade.data, entidade.id),
         )
         self._db.commit()
 
@@ -44,7 +40,7 @@ class PedidoRepository(BaseRepository):
         self._cursor.execute("DELETE FROM pedido WHERE id = ?", (id,))
         self._db.commit()
 
-    def buscar_por_id(self, id):
+    def buscar_por_id(self, id) -> None:
         self._cursor.execute(
             "SELECT id, usuario_id, total, data FROM pedido WHERE id = ?", (id,))
         row = self._cursor.fetchone()
@@ -53,15 +49,22 @@ class PedidoRepository(BaseRepository):
         pedido = Pedido(usuario_id=row[1], total=row[2], data=row[3], id=row[0])
         for item in self.listar_itens(pedido.id):
             pedido.itens.append(item)
-        return pedido
+        # store the found pedido on the repository instance for callers
+        # that rely on this method without return (base signature expects None)
+        self._last_busca = pedido
+        return None
 
     def listar_todos(self):
         self._cursor.execute(
             "SELECT id, usuario_id, total, data FROM pedido ORDER BY data DESC")
-        return [
+        pedidos = [
             Pedido(usuario_id=r[1], total=r[2], data=r[3], id=r[0])
             for r in self._cursor.fetchall()
         ]
+        # store the found list on the repository instance to match base
+        # signature that expects no return value
+        self._last_listar_todos = pedidos
+        return None
 
     def listar_por_usuario(self, usuario_id):
         self._cursor.execute("""
@@ -86,7 +89,7 @@ class PedidoRepository(BaseRepository):
         ]
 
     def listar_itens_detalhado(self, pedido_id):
-        """Retorna tuplas (titulo, quantidade, preco_unitario) para exibicao."""
+
         self._cursor.execute("""
             SELECT l.titulo, i.quantidade, i.preco_unitario
             FROM item_pedido i

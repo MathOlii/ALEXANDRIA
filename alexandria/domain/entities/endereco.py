@@ -1,6 +1,3 @@
-"""Entidade Endereco (lado "1" do relacionamento 1:1 com Usuario)."""
-
-
 class Endereco:
     def __init__(self, rua, numero, bairro, cep, cidade, uf,
                  usuario_id=None, id=None):

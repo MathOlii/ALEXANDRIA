@@ -1,21 +1,3 @@
-"""Padrao DECORATOR (obrigatorio) aplicado ao calculo do preco do pedido.
-
-Estrutura classica do Decorator:
-
-    CalculoPreco            (Component / interface)
-      |- PrecoBaseCarrinho  (ConcreteComponent: subtotal do carrinho)
-      |- DecoradorPreco     (Decorator base: envolve um CalculoPreco)
-           |- DescontoProgressivo
-           |- CupomDesconto
-           |- Imposto
-           |- Frete
-
-Cada decorador adiciona uma responsabilidade ao calculo SEM alterar os outros
-(Aberto/Fechado - OCP) e pode ser empilhado em qualquer ordem. A montagem
-automatica dessa cadeia (no PedidoService) e o "processo de negocio
-automatizado" pedido no enunciado: o valor final do pedido passa a ser
-calculado por composicao de regras.
-"""
 from abc import ABC, abstractmethod
 
 from alexandria.config import (
@@ -28,19 +10,16 @@ from alexandria.config import (
 
 
 class CalculoPreco(ABC):
-    """Interface comum (Component)."""
+    @abstractmethod
+    def calcular(self) -> float:
+        pass
 
     @abstractmethod
-    def calcular(self):
-        """Retorna o valor monetario resultante deste passo do calculo."""
-
-    @abstractmethod
-    def descricao(self):
-        """Retorna uma descricao legivel da composicao aplicada."""
+    def descricao(self) -> str:
+        pass
 
 
 class PrecoBaseCarrinho(CalculoPreco):
-    """ConcreteComponent: ponto de partida = subtotal do carrinho."""
 
     def __init__(self, carrinho):
         self._carrinho = carrinho
@@ -53,7 +32,6 @@ class PrecoBaseCarrinho(CalculoPreco):
 
 
 class DecoradorPreco(CalculoPreco):
-    """Decorator base: mantem referencia a outro CalculoPreco."""
 
     def __init__(self, componente):
         self._componente = componente
@@ -66,7 +44,6 @@ class DecoradorPreco(CalculoPreco):
 
 
 class DescontoProgressivo(DecoradorPreco):
-    """Desconto por volume: a partir de N itens, aplica um percentual."""
 
     def __init__(self, componente, quantidade_itens):
         super().__init__(componente)
@@ -91,7 +68,6 @@ class DescontoProgressivo(DecoradorPreco):
 
 
 class CupomDesconto(DecoradorPreco):
-    """Aplica um percentual de desconto vindo de um cupom."""
 
     def __init__(self, componente, codigo, percentual):
         super().__init__(componente)
@@ -109,7 +85,6 @@ class CupomDesconto(DecoradorPreco):
 
 
 class Imposto(DecoradorPreco):
-    """Acrescenta imposto sobre o valor corrente."""
 
     def calcular(self):
         valor = self._componente.calcular()
@@ -123,7 +98,6 @@ class Imposto(DecoradorPreco):
 
 
 class Frete(DecoradorPreco):
-    """Acrescenta frete, exceto quando o total ja supera o limite de frete gratis."""
 
     def _valor_frete(self):
         if self._componente.calcular() >= VALOR_FRETE_GRATIS_ACIMA_DE:

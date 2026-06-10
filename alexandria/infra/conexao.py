@@ -5,7 +5,6 @@ from alexandria.config import CAMINHO_BANCO
 
 
 class Conexao:
-    """Singleton: garante uma unica conexao com o SQLite durante a execucao."""
 
     _instancia = None
 
