@@ -91,9 +91,10 @@ class PedidoRepository(BaseRepository):
     def listar_itens_detalhado(self, pedido_id):
 
         self._cursor.execute("""
-            SELECT l.titulo, i.quantidade, i.preco_unitario
+            SELECT COALESCE(l.titulo, '(livro removido)'),
+                   i.quantidade, i.preco_unitario
             FROM item_pedido i
-            JOIN livro l ON l.id = i.livro_id
+            LEFT JOIN livro l ON l.id = i.livro_id
             WHERE i.pedido_id = ?
         """, (pedido_id,))
         return self._cursor.fetchall()

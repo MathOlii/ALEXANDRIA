@@ -28,7 +28,7 @@ class AdminMenu:
 
         busca = tk.Frame(self.frame)
         busca.pack()
-        tk.Label(busca, text="Buscar:").pack(side="left")
+        tk.Label(busca, text="Buscar (ID/titulo/autor):").pack(side="left")
         self.search = tk.Entry(busca)
         self.search.pack(side="left")
         tk.Button(busca, text="Pesquisar", command=self.buscar).pack(side="left")
@@ -70,7 +70,8 @@ class AdminMenu:
         termo = self.search.get().lower()
         self.tree.delete(*self.tree.get_children())
         for livro in self.repo.listar_todos():
-            alvo = f"{livro.titulo} {livro.autor} {livro.genero} {livro.editora}".lower()
+            alvo = (f"{livro.id} {livro.titulo} {livro.autor} "
+                    f"{livro.genero} {livro.editora}").lower()
             if termo in alvo:
                 self._inserir_linha(livro)
 

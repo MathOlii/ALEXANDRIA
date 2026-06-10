@@ -26,7 +26,7 @@ class ClienteMenu:
 
         busca = tk.Frame(self.frame)
         busca.pack(pady=5)
-        tk.Label(busca, text="Buscar:").pack(side="left")
+        tk.Label(busca, text="Buscar (ID/titulo/autor):").pack(side="left")
         self.search = tk.Entry(busca)
         self.search.pack(side="left", padx=5)
         tk.Button(busca, text="Pesquisar", command=self.pesquisar).pack(side="left")
@@ -56,7 +56,8 @@ class ClienteMenu:
     def listar(self, filtro=None):
         self.tree.delete(*self.tree.get_children())
         for livro in self.repo.listar_todos():
-            if filtro is None or filtro in f"{livro.titulo} {livro.autor}".lower():
+            alvo = f"{livro.id} {livro.titulo} {livro.autor} {livro.genero}".lower()
+            if filtro is None or filtro in alvo:
                 self._inserir_linha(livro)
 
     def pesquisar(self):
@@ -133,6 +134,7 @@ class ClienteMenu:
         frame.pack(fill="both", expand=True)
 
         tk.Label(frame, text="MEUS PEDIDOS", font=("Arial", 16)).pack(pady=10)
+        tk.Label(frame, text="(clique em um pedido e veja os detalhes)").pack()
 
         tree = ttk.Treeview(frame, columns=("ID", "Total", "Data"), show="headings")
         for col in ("ID", "Total", "Data"):
@@ -144,19 +146,21 @@ class ClienteMenu:
             tree.insert("", "end", values=(
                 pedido.id, f"R$ {pedido.total:.2f}", pedido.data))
 
-        def ver_itens(_event):
+        def ver_itens(_event=None):
             selecao = tree.selection()
             if not selecao:
+                messagebox.showwarning("Aviso", "Selecione um pedido.")
                 return
             pedido_id = int(tree.item(selecao[0], "values")[0])
             itens = self.service.itens_do_pedido(pedido_id)
             texto = "\n".join(
                 f"{titulo} | Qtd: {qtd} | R$ {preco:.2f}"
                 for titulo, qtd, preco in itens) or "Nenhum item."
-            messagebox.showinfo(f"Pedido {pedido_id}", texto)
+            messagebox.showinfo(f"Detalhes do Pedido #{pedido_id}", texto)
 
         tree.bind("<Double-1>", ver_itens)
-        tk.Button(frame, text="Voltar", command=self.voltar).pack(pady=10)
+        tk.Button(frame, text="Ver Detalhes", command=ver_itens).pack(pady=5)
+        tk.Button(frame, text="Voltar", command=self.voltar).pack(pady=5)
 
     # --- navegacao ---
     def voltar(self):

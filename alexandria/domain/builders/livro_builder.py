@@ -35,15 +35,24 @@ class LivroBuilder:
         return self
 
     def com_preco(self, preco):
-        self._dados["preco"] = float(preco)
+        try:
+            self._dados["preco"] = float(str(preco).replace(",", ".").strip())
+        except (TypeError, ValueError):
+            raise ValueError("Preco deve ser um numero decimal (ex: 49.90).")
         return self
 
     def com_estoque(self, estoque):
-        self._dados["estoque"] = int(estoque)
+        try:
+            self._dados["estoque"] = int(str(estoque).strip())
+        except (TypeError, ValueError):
+            raise ValueError("Estoque deve ser um numero inteiro (ex: 10).")
         return self
 
     def com_ano(self, ano):
-        self._dados["ano_publicacao"] = int(ano)
+        try:
+            self._dados["ano_publicacao"] = int(str(ano).strip())
+        except (TypeError, ValueError):
+            raise ValueError("Ano deve ser um numero inteiro (ex: 1965).")
         return self
 
     def com_idioma(self, idioma):

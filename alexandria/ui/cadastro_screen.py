@@ -42,6 +42,11 @@ class CadastroScreen:
         for chave, rotulo in self._CAMPOS_ENDERECO:
             self.inputs[chave] = self._criar_input(frame, rotulo, False)
 
+        # Mascaras de formatacao em tempo real
+        self.inputs["cpf"].bind("<KeyRelease>", self._mascara_cpf)
+        self.inputs["telefone"].bind("<KeyRelease>", self._mascara_telefone)
+        self.inputs["cep"].bind("<KeyRelease>", self._mascara_cep)
+
         self.tipo = tk.StringVar(value="cliente")
         tk.Label(frame, text="Tipo de Usuario").pack()
         tk.Radiobutton(frame, text="Cliente", variable=self.tipo,
@@ -62,6 +67,41 @@ class CadastroScreen:
         entry = tk.Entry(container, width=28, show="*" if secreto else "")
         entry.pack(side="left")
         return entry
+
+    # --- Mascaras de formatacao ---
+    @staticmethod
+    def _so_digitos(texto, maximo):
+        return "".join(filter(str.isdigit, texto))[:maximo]
+
+    def _aplicar(self, entry, texto):
+        entry.delete(0, tk.END)
+        entry.insert(0, texto)
+
+    def _mascara_cpf(self, _event):
+        d = self._so_digitos(self.inputs["cpf"].get(), 11)
+        partes = [d[:3], d[3:6], d[6:9]]
+        texto = ".".join(p for p in partes if p)
+        if len(d) > 9:
+            texto += "-" + d[9:]
+        self._aplicar(self.inputs["cpf"], texto)
+
+    def _mascara_telefone(self, _event):
+        d = self._so_digitos(self.inputs["telefone"].get(), 11)
+        texto = d[:2]
+        if len(d) > 2:
+            texto += " " + d[2:3]
+        if len(d) > 3:
+            texto += " " + d[3:7]
+        if len(d) > 7:
+            texto += "-" + d[7:11]
+        self._aplicar(self.inputs["telefone"], texto)
+
+    def _mascara_cep(self, _event):
+        d = self._so_digitos(self.inputs["cep"].get(), 8)
+        texto = d[:5]
+        if len(d) > 5:
+            texto += "-" + d[5:]
+        self._aplicar(self.inputs["cep"], texto)
 
     def cadastrar(self):
         dados = {chave: entry.get() for chave, entry in self.inputs.items()}

@@ -49,27 +49,37 @@ class PedidoService:
         calculo = self.montar_calculo(carrinho, codigo_cupom)
         total = round(calculo.calcular(), 2)
 
+        # 1. Valida estoque de TODOS os itens antes de gravar qualquer coisa,
+        #    evitando pedidos parciais (e a duplicacao causada por uma retentativa).
+        itens_validados = []
+        for item in carrinho.itens:
+            livro = self._livro_repo.buscar_por_id(item.livro.id)
+            if livro is None:
+                raise ValueError(f"Livro nao encontrado: {item.livro.titulo}")
+            if not livro.tem_estoque_para(item.quantidade):
+                raise ValueError(f"Estoque insuficiente: {livro.titulo}")
+            itens_validados.append((livro, item.quantidade))
+
+        # 2. Persiste o pedido, baixa o estoque e grava os itens.
         pedido = Pedido(
             usuario_id=usuario_id,
             total=total,
             data=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         )
-        pedido_id = self._pedido_repo.inserir(pedido)
+        self._pedido_repo.inserir(pedido)  # preenche pedido.id in-place
+        pedido_id = pedido.id
 
-        for item in carrinho.itens:
-            livro = self._livro_repo.buscar_por_id(item.livro.id)
-            if livro is None:
-                raise ValueError("Livro nao encontrado.")
-            livro.baixar_estoque(item.quantidade)
+        for livro, quantidade in itens_validados:
+            livro.baixar_estoque(quantidade)
             self._livro_repo.atualizar(livro)
-
             self._pedido_repo.inserir_item(ItemPedido(
                 livro_id=livro.id,
-                quantidade=item.quantidade,
+                quantidade=quantidade,
                 preco_unitario=livro.preco,
                 pedido_id=pedido_id,
             ))
 
+        # 3. Limpa o carrinho apos a gravacao bem-sucedida.
         carrinho.limpar()
         return pedido_id
 

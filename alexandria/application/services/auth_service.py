@@ -46,12 +46,13 @@ class AuthService:
             telefone=Telefone(dados["telefone"]).valor,
             cpf=Cpf(dados["cpf"]).valor,
         )
-        usuario_id = self._usuario_repo.inserir(usuario)
+        # inserir() preenche usuario.id in-place (convencao dos repositorios).
+        self._usuario_repo.inserir(usuario)
 
         endereco = Endereco(
             rua=dados["rua"], numero=dados["numero"], bairro=dados["bairro"],
             cep=Cep(dados["cep"]).valor, cidade=dados["cidade"],
-            uf=Uf(dados["uf"]).valor, usuario_id=usuario_id,
+            uf=Uf(dados["uf"]).valor, usuario_id=usuario.id,
         )
         self._endereco_repo.inserir(endereco)
         return usuario
