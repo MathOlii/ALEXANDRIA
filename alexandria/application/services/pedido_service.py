@@ -49,7 +49,7 @@ class PedidoService:
         calculo = self.montar_calculo(carrinho, codigo_cupom)
         total = round(calculo.calcular(), 2)
 
-        # 1. Valida estoque:
+        # Valida estoque:
         itens_validados = []
         for item in carrinho.itens:
             livro = self._livro_repo.buscar_por_id(item.livro.id)
