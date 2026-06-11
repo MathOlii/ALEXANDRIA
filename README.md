@@ -4,10 +4,6 @@ Sistema de **livraria** desenvolvido em Python com interface gráfica (Tkinter)
 e banco de dados SQLite. O projeto foi estruturado em camadas e aplica
 **Design Patterns** e os princípios **SOLID** e de **Calistenia de Objetos**.
 
-> Versão 2.0 — refatoração completa do projeto M1, com correção de bugs,
-> CRUD completo, relacionamentos 1:1 e 1:n e implementação obrigatória do
-> padrão **Decorator**.
-
 ---
 
 ## ✨ Funcionalidades
@@ -52,7 +48,7 @@ alexandria/
 
 | Padrão | Onde | Para quê |
 |--------|------|----------|
-| **Decorator** (obrigatório) | `domain/pricing/calculo_preco.py` | Compor o preço final do pedido empilhando regras (desconto progressivo → cupom → imposto → frete) sem alterar as classes existentes. |
+| **Decorator** | `domain/pricing/calculo_preco.py` | Compor o preço final do pedido empilhando regras (desconto progressivo → cupom → imposto → frete) sem alterar as classes existentes. |
 | **Builder** | `domain/builders/livro_builder.py` | Construir um `Livro` passo a passo, validando os dados antes de instanciar. |
 | **Factory** | `factories/usuario_factory.py` | Decidir qual subclasse de `Usuario` (`Cliente`/`Administrador`) criar a partir do tipo. |
 | **Command** | `application/commands/livro_commands.py` | Encapsular as operações de CRUD de livro do admin e permitir **desfazer** a última ação. |
