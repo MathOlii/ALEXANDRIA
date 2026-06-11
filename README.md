@@ -4,7 +4,7 @@ Sistema de **livraria** desenvolvido em Python com interface gráfica (Tkinter)
 e banco de dados SQLite. O projeto foi estruturado em camadas e aplica
 **Design Patterns** e os princípios **SOLID** e de **Calistenia de Objetos**.
 
-> Versão 2.0 — refatoração completa do projeto base, com correção de bugs,
+> Versão 2.0 — refatoração completa do projeto M1, com correção de bugs,
 > CRUD completo, relacionamentos 1:1 e 1:n e implementação obrigatória do
 > padrão **Decorator**.
 
@@ -47,12 +47,6 @@ alexandria/
 │   └── repositories/         # acesso a dados        (REPOSITORY)
 └── ui/                       # interface Tkinter
 ```
-
-Diagramas detalhados:
-- [Diagrama de Classes](docs/diagrama_classes.md)
-- [Diagramas de Sequência](docs/diagrama_sequencia.md)
-
----
 
 ## 🧩 Design Patterns aplicados
 
