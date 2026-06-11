@@ -1,7 +1,4 @@
-"""Catalogo simples de cupons de desconto.
 
-Mantem o mapeamento codigo -> percentual fora dos decorators (SRP).
-"""
 
 _CUPONS = {
     "ALEXANDRIA10": 0.10,
