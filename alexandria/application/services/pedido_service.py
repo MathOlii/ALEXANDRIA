@@ -78,7 +78,7 @@ class PedidoService:
                 pedido_id=pedido_id,
             ))
 
-        # 3. Limpa o carrinho apos a gravacao bem-sucedida.
+        
         carrinho.limpar()
         return pedido_id
 
