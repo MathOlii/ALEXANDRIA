@@ -49,8 +49,7 @@ class PedidoService:
         calculo = self.montar_calculo(carrinho, codigo_cupom)
         total = round(calculo.calcular(), 2)
 
-        # 1. Valida estoque de TODOS os itens antes de gravar qualquer coisa,
-        #    evitando pedidos parciais (e a duplicacao causada por uma retentativa).
+        # 1. Valida estoque:
         itens_validados = []
         for item in carrinho.itens:
             livro = self._livro_repo.buscar_por_id(item.livro.id)
