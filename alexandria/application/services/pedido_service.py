@@ -59,7 +59,7 @@ class PedidoService:
                 raise ValueError(f"Estoque insuficiente: {livro.titulo}")
             itens_validados.append((livro, item.quantidade))
 
-        # 2. Persiste o pedido, baixa o estoque e grava os itens.
+        
         pedido = Pedido(
             usuario_id=usuario_id,
             total=total,
