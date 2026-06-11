@@ -8,7 +8,7 @@ _CUPONS = {
 
 
 def percentual_do_cupom(codigo):
-    """Retorna o percentual (0..1) do cupom ou None se invalido."""
+    
     if not codigo:
         return None
     return _CUPONS.get(codigo.strip().upper())
